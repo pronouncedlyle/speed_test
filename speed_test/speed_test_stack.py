@@ -2,6 +2,7 @@ from aws_cdk import (
     Stack,
     aws_lambda,
     aws_dynamodb,
+    aws_apigateway as apigw,
 )
 from constructs import Construct
 
@@ -30,3 +31,6 @@ class SpeedTestStack(Stack):
 
         # grant permission to lambda to write to demo table
         demo_table.grant_write_data(lambda_function)
+
+        # Create an API gateway REST API
+        base_api = apigw.LambdaRestApi(self, 'ApiGW', rest_api_name="MainAPI", handler=lambda_function)
