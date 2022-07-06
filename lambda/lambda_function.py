@@ -12,7 +12,7 @@ def lambda_handler(event, context):
     # put item in table
     response = table.put_item(
         Item={
-            'id': str("Hello there")
+            'id': str("Hi everybody")
         }
     )
 

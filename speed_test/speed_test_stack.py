@@ -1,4 +1,6 @@
 from aws_cdk import (
+    CfnOutput,
+    CfnParameter,
     Stack,
     aws_lambda,
     aws_dynamodb,
@@ -33,10 +35,18 @@ class SpeedTestStack(Stack):
         demo_table.grant_write_data(lambda_function)
 
         # Create an API gateway REST API
-        base_api = apigw.LambdaRestApi(self, 'ApiGW', rest_api_name="MainAPI", handler=lambda_function)
-        #TODO: Figure out how to dynamically pass the API url to window_script. Does not work now. 
-        #...either create custom domain name or something else. No idea
-        api_url = base_api.url
-        #See above TODO, right now you jus have to pull the url from the print statement below or the console
-        #...and plug it into api_url in windows_script
-        print(api_url)
+        base_api = apigw.LambdaRestApi(
+            self, 'ApiGW', 
+            rest_api_name="MainAPI", 
+            handler=lambda_function,
+            )
+        base_api.root.add_method("POST", target= lambda_function)
+
+        #TODO: Figure out how to dynamically pass the API url to window_script when it deploys. Does not work now. Simply importing results in error... 
+        # cfn Parameter or output? As a temporary solution I'm just hard-coding the APIGW URL it outputs in the console when I deploy.
+
+        #api_url = base_api.url
+
+        #print(api_url)
+        #CfnOutput(self, 'api_url', value=api_url)
+        #CfnParameter (self, 'api_url', typevalue=api_url)
