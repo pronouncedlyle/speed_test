@@ -1,5 +1,3 @@
-Speed Test:
-
 This is a simple project I started to get familiar with CDK and some basic AWS services. 
 
 The purpose is to run an internet connection speed test provided by the SpeedTest CLI from the user's local machine,
