@@ -10,10 +10,12 @@ import json
 command = [r"speedtest-cli", "--json"]
 output = subprocess.run(command, capture_output=True, text=True)
 
-# Saves output to a string, then creates a dictionary. TODO: add in some error handling here. If error code or no valid output etc...
-jsonResults = str(output.stdout)
-results = json.loads(jsonResults)
+# Saves output to a string TODO: add in some error handling here. If error code or no valid output etc...
+jsonRawResults = str(output.stdout)
+# creates python dictionary from json string to pull and format relevant data
+results = json.loads(jsonRawResults)
 
+# Creates new python dictionary with only relevant data TODO: this is possibly the best place to format the upload / download speed numbers from bits to mb/s.
 dictResults = {
     "timestamp": (results['timestamp']),
     "download": (results['download']),
@@ -23,12 +25,12 @@ dictResults = {
     "serverCountry": (results['server']['country'])
 }
 
-print(dictResults)
+# takes cleaned-up python dictionary and puts it back in json string format (redundant?)
+jsonResults = json.dumps(dictResults)
+print(jsonResults)
     
-
-#TODO: grab relevant data from speedtest json results. Make variable or pare down JSON to relevant info. https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Programming.LowLevelAPI.html
-
 # POST request to API
-# TODO: See note in speed_test_stack
+# TODO: 1. Dynamically populate API url without hard-coding it in. See note in speed_test_stack
 api_url= "https://dpjwnub3z5.execute-api.us-east-1.amazonaws.com/prod/"
-requests.post(api_url, data=dictResults) # add json={key: value} and other needed args later. 
+# TODO: How to correctly pass jsonResults to API GW so lambda function can consume it?
+requests.post(api_url, data=jsonResults)
